@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Líderes Orando · Red Salas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #6B4FBB;
+      --purple-dark:  #4A3490;
+      --purple-mid:   #8B6FD4;
+      --purple-pale:  #EDE8F8;
+      --purple-row:   #F5F2FC;
+      --border:       #DDD6F3;
+      --text:         #1C1635;
+      --text-mid:     #5A5280;
+      --text-light:   #9E99BA;
+      --green:        #1A7A3C;
+      --green-bg:     #E8F5EE;
+      --white:        #FFFFFF;
+      --shadow:       0 8px 32px rgba(75,52,144,0.12);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(145deg, #EDE8F8 0%, #F3F0FC 60%, #E8E4F5 100%);
+      min-height: 100vh;
+      padding: 32px 16px 56px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 780px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(120deg, var(--purple-dark) 0%, var(--purple) 60%, var(--purple-mid) 100%);
+      padding: 28px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .header h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -.2px;
+      line-height: 1.2;
+      position: relative;
+    }
+    .header .periodo {
+      font-size: .8rem;
+      color: rgba(255,255,255,.75);
+      margin-top: 5px;
+      font-weight: 500;
+      position: relative;
+    }
+
+    /* TOTALS */
+    .totals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .total-box {
+      padding: 20px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .total-box:first-child { border-right: 1px solid var(--border); }
+    .total-label {
+      font-size: .68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text-light);
+    }
+    .total-value {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--purple);
+      line-height: 1;
+    }
+    .total-pct {
+      display: inline-block;
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      width: fit-content;
+    }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+
+    thead tr.main-head th {
+      background: var(--purple-pale);
+      font-family: 'Montserrat', sans-serif;
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--purple-dark);
+      padding: 11px 14px;
+      text-align: center;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    thead tr.main-head th.left { text-align: left; }
+
+    thead tr.sub-head th {
+      background: #F8F5FF;
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--text-light);
+      padding: 6px 14px;
+      text-align: center;
+      border-bottom: 1.5px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    tbody tr { transition: background .12s; }
+    tbody tr:nth-child(even) { background: var(--purple-row); }
+    tbody tr:nth-child(odd)  { background: var(--white); }
+    tbody tr:hover { background: #EAE3F7; }
+
+    tbody td {
+      padding: 9px 14px;
+      text-align: center;
+      color: var(--text);
+      border-bottom: 1px solid #F0ECF8;
+      white-space: nowrap;
+    }
+    tbody td.left  { text-align: left; }
+    tbody td.idx   { color: var(--text-light); font-size: .75rem; font-weight: 600; width: 36px; }
+    tbody td.cod   { font-weight: 600; font-size: .75rem; color: var(--text-mid); }
+    tbody td.sub   { font-weight: 500; color: var(--text); min-width: 110px; }
+    tbody td.num   { color: var(--text-mid); }
+    tbody td.total { font-weight: 700; color: var(--text); }
+    tbody td.reg   { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: .92rem; color: var(--purple-dark); }
+    tbody td.reg.zero { color: var(--border); }
+
+    /* FOOTER */
+    .footer {
+      padding: 12px 24px;
+      font-size: .7rem;
+      color: var(--text-light);
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: #FAFAFE;
+    }
+    .footer b { color: var(--purple); }
+
+    /* STATES */
+    .state {
+      padding: 52px 24px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: .88rem;
+    }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid var(--border);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div class="header">
+    <h1>Registro de Líderes Orando · Red Salas</h1>
+    <div class="periodo" id="periodo">Cargando informe…</div>
+  </div>
+
+  <div class="totals" id="totals" style="display:none">
+    <div class="total-box">
+      <span class="total-label">Total Líderes</span>
+      <span class="total-value" id="totalLideres">—</span>
+    </div>
+    <div class="total-box">
+      <span class="total-label">Total Registros</span>
+      <span class="total-value" id="totalRegistros">—</span>
+      <span class="total-pct" id="totalPct" style="display:none"></span>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="state">
+      <div class="spinner"></div>
+      Cargando datos desde Google Sheets…
+    </div>
+  </div>
+
+  <div class="footer" id="footer" style="display:none">
+    Actualizado a las <b id="updateTime"></b> · Se refresca automáticamente cada 60 s
+  </div>
+
+</div>
+<script>
+const CSV_URL    = "https://script.google.com/macros/s/AKfycbzUoup7IaRDnsf6UAmN1pRAPlODQmTcKwW74P7dNXo0WKelmB1owRVNs2tYv_3x_FA/exec";
+const REFRESH_MS = 60_000;
+
+function parseCSV(text) {
+  const rows = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const cols = []; let cur = '', inQ = false;
+    for (const c of line) {
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+function setContent(html) { document.getElementById('content').innerHTML = html; }
+function renderError(msg) { setContent(`<div class="state">&#9888;&#65039;<br><br>${msg}</div>`); }
+
+async function load() {
+  try {
+    const res  = await fetch(CSV_URL + "?t=" + Date.now());
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    if (!text || text.length < 10) throw new Error("Respuesta vacia");
+    render(parseCSV(text));
+  } catch(e) {
+    renderError("No se pudo cargar el archivo.<br><small>" + e.message + "</small>");
+  }
+}
+
+function render(rows) {
+  // Estructura del Sheet (nueva versión simplificada):
+  // Fila 1 (index 0) = cabeceras: I | Codigos | Sub Red | Lideres Hombres | Lideres Mujeres | Total Lideres | Registros
+  // Filas 2-36 (index 1-35) = datos
+  // Columnas: A=0, B=1, C=2, D=3, E=4, F=5, G=6
+
+  // --- Periodo: lunes a domingo de la semana actual ---
+  function fmt(d) {
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
+  const hoy  = new Date();
+  const dow  = hoy.getDay(); // 0=dom,1=lun,...,6=sab
+  // Lunes de esta semana (si hoy es lunes dow=1, retroceder 0 días; domingo dow=0 retroceder 6)
+  const diffLunes = (dow === 0) ? -6 : 1 - dow;
+  const lunes  = new Date(hoy); lunes.setDate(hoy.getDate() + diffLunes);
+  const domingo = new Date(lunes); domingo.setDate(lunes.getDate() + 6);
+  const periodo = `Informe semanal del ${fmt(lunes)} al ${fmt(domingo)}`;
+  document.getElementById('periodo').textContent = periodo;
+
+  // --- Datos: filas index 1 a 35 ---
+  const dataRows = rows.slice(1, 36).filter(r => r.join('').trim() !== '');
+
+  // --- Totales: sumar columna F (Total Lideres) y G (Registros) ---
+  let sumLideres = 0, sumRegistros = 0;
+  for (const r of dataRows) {
+    sumLideres   += parseInt(r[5]) || 0;
+    sumRegistros += parseInt(r[6]) || 0;
+  }
+
+  // Si hay fila de total en el sheet (buscar "total" en col A o B), usar esos valores
+  for (let i = 0; i < rows.length; i++) {
+    const a = (rows[i][0] || '').toLowerCase().trim();
+    const b = (rows[i][1] || '').toLowerCase().trim();
+    if (a === 'total' || b === 'total' || a.includes('total general')) {
+      const tL = parseInt(rows[i][5]);
+      const tR = parseInt(rows[i][6]);
+      if (!isNaN(tL)) sumLideres   = tL;
+      if (!isNaN(tR)) sumRegistros = tR;
+      break;
+    }
+  }
+
+  const pct = sumLideres > 0 ? Math.round((sumRegistros / sumLideres) * 100) + '%' : '';
+
+  document.getElementById('totalLideres').textContent   = sumLideres   || '—';
+  document.getElementById('totalRegistros').textContent = sumRegistros || '—';
+  const pctEl = document.getElementById('totalPct');
+  if (pct) { pctEl.textContent = pct; pctEl.style.display = 'inline-block'; }
+  document.getElementById('totals').style.display = 'grid';
+
+  // --- Tabla ---
+  if (!dataRows.length) { setContent('<div class="state">Sin datos.</div>'); return; }
+
+  let tbody = '';
+  for (const r of dataRows) {
+    const g   = i => r[i] !== undefined ? r[i] : '';
+    const reg = g(6);
+    const regN = parseInt(reg);
+    const isZero = reg === '' || reg === '0' || regN === 0;
+
+    tbody += `<tr>
+      <td class="idx">${g(0)}</td>
+      <td class="cod left">${g(1)}</td>
+      <td class="sub left">${g(2)}</td>
+      <td class="num">${g(3)}</td>
+      <td class="num">${g(4)}</td>
+      <td class="total">${g(5)}</td>
+      <td class="reg${isZero ? ' zero' : ''}">${reg !== '' ? reg : '0'}</td>
+    </tr>`;
+  }
+
+  setContent(`
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr class="main-head">
+            <th class="left">I</th>
+            <th class="left">Código</th>
+            <th class="left">Sub Red</th>
+            <th colspan="3">N° Líderes</th>
+            <th>N° Registros</th>
+          </tr>
+          <tr class="sub-head">
+            <th></th><th></th><th></th>
+            <th>H</th><th>M</th><th>Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${tbody}</tbody>
+      </table>
+    </div>`);
+
+  document.getElementById('footer').style.display = 'block';
+  document.getElementById('updateTime').textContent =
+    new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+}
+
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
