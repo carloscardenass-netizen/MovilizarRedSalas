@@ -116,11 +116,24 @@
     }
 
     /* TABLE */
-    .table-wrap { overflow-x: auto; }
+    .table-wrap {
+      overflow-x: auto;
+      /* Cabecera congelada: necesita altura máxima en el contenedor */
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .table-wrap table { position: relative; }
+    thead tr.main-head th,
+    thead tr.sub-head  th { position: sticky; background-clip: padding-box; z-index: 2; }
+    thead tr.main-head th { top: 0; }
+    thead tr.sub-head  th { top: 37px; /* altura aprox de main-head */ }
     table { width: 100%; border-collapse: collapse; font-size: .82rem; }
 
     thead tr.main-head th {
       background: var(--purple-pale);
+      position: sticky;
+      top: 0;
+      z-index: 3;
       font-family: 'Montserrat', sans-serif;
       font-size: .68rem;
       font-weight: 700;
@@ -136,6 +149,9 @@
 
     thead tr.sub-head th {
       background: #F8F5FF;
+      position: sticky;
+      top: 37px;
+      z-index: 2;
       font-size: .68rem;
       font-weight: 600;
       color: var(--text-light);
@@ -194,6 +210,31 @@
       margin: 0 auto 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* MOVIL */
+    @media (max-width: 600px) {
+      body { padding: 0 0 40px; }
+      .card { border-radius: 0; border-left: none; border-right: none; box-shadow: none; max-width: 100%; }
+      .header { padding: 18px 16px; }
+      .header h1 { font-size: .95rem; }
+      .header .periodo { font-size: .7rem; }
+      .total-box { padding: 12px 16px; }
+      .total-value { font-size: 1.6rem; }
+      .total-label { font-size: .6rem; }
+      .total-pct { font-size: .68rem; }
+      /* Ocultar columna Codigo en movil */
+      .col-cod { display: none !important; }
+      /* Cabecera congelada en movil: ajustar top del sub-head */
+      .table-wrap { max-height: 60vh; }
+      thead tr.main-head th { top: 0; padding: 7px 8px; font-size: .6rem; }
+      thead tr.sub-head  th { top: 32px; padding: 5px 8px; font-size: .6rem; }
+      tbody td { padding: 7px 8px; font-size: .76rem; }
+      tbody td.sub { min-width: 85px; }
+      tbody td.idx { width: 22px; font-size: .66rem; padding: 7px 4px; }
+      tbody td.num { padding: 7px 6px; }
+      tbody td.reg { font-size: .8rem; }
+      .footer { font-size: .62rem; padding: 10px 14px; }
+    }
   </style>
 </head>
 <body>
@@ -328,7 +369,7 @@ function render(rows) {
 
     tbody += `<tr>
       <td class="idx">${g(0)}</td>
-      <td class="cod left">${g(1)}</td>
+      <td class="cod left col-cod">${g(1)}</td>
       <td class="sub left">${g(2)}</td>
       <td class="num">${g(3)}</td>
       <td class="num">${g(4)}</td>
@@ -343,7 +384,7 @@ function render(rows) {
         <thead>
           <tr class="main-head">
             <th class="left">I</th>
-            <th class="left">Código</th>
+            <th class="left col-cod">Código</th>
             <th class="left">Sub Red</th>
             <th colspan="3">N° Líderes</th>
             <th>N° Registros</th>
